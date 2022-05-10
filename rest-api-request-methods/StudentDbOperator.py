@@ -130,8 +130,13 @@ class StudentDBOperator:
         self.create_connection()
         self.create_cursor()
         resp.status = falcon.HTTP_200
-        self.cur.execute("SELECT * FROM STUDENT")
+        params = req.params
+        if params:
+            self.cur.execute("SELECT * FROM STUDENT WHERE NAME = %(a)s", {"a": params["name"]})
+        else:
+            self.cur.execute("SELECT * FROM STUDENT")
         records = self.cur.fetchall()
+
         print("Fetched data from Student : ")
         students = []
         for record in records:
