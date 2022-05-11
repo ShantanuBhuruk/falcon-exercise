@@ -13,9 +13,11 @@ class Authorize(object):
 
     def __basic_authentication(self, user_name, password):
         if not user_name or not password:
-            raise falcon.HTTPBadRequest("Bad Request", "Invalid Credentials")
+            raise falcon.HTTPUnauthorized("Unauthorized", "Invalid Credentials")
         elif user_name not in user_accounts or user_accounts[user_name] != password:
-            raise falcon.HTTPBadRequest("Bad Request", "Invalid Credentials")
+            raise falcon.HTTPUnauthorized("Unauthorized", "Invalid Credentials")
+        else:
+            print("User Authenticated...!")
 
     def __call__(self, req, resp, resource, params):
         print(f"in authorize {req.auth}")
@@ -27,10 +29,10 @@ class Authorize(object):
                 user_name = auth[0]
                 password = auth[1]
                 self.__basic_authentication(user_name, password)
-                req.user_id = user_name
+                req.user_name = user_name
 
         else:
-            raise falcon.HTTPBadRequest("Bad Request", "Invalid Credentials")
+            raise falcon.HTTPUnauthorized("Bad Request", "Invalid Credentials")
 
 
 class ObjResource:
@@ -46,9 +48,10 @@ class ObjResource:
     def on_post(self, req, resp):
         print("Triggered Post")
         output = {
-            "user_id": req.user_id
+            "user_id": req.user_name
         }
         resp.body = json.dumps(output)
 
-api = falcon.API()
-api.add_route("/account", ObjResource())
+
+app = falcon.App()
+app.add_route("/account", ObjResource())

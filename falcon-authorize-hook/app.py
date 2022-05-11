@@ -30,5 +30,6 @@ class ObjResource:
         }
         resp.body = json.dumps(output)
 
-api = falcon.API()
-api.add_route("/user", ObjResource())
+
+app = falcon.App()
+app.add_route("/user", ObjResource())
