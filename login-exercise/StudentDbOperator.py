@@ -24,10 +24,10 @@ class StudentDBOperator:
     def __init__(self):
         pass
 
-    def __validate_json(self, req):
+    def validate_json(self, req):
         try:
             self.__json_content = json.loads(req.stream.read())
-            print("Valid Input JSON")
+            print("Valid Input JSON : {}".format(self.__json_content))
             return True
         except ValueError as e:
             self.__json_content = {}
@@ -44,6 +44,7 @@ class StudentDBOperator:
     """
 
     def close_connection(self):
+        print("Database connection closed")
         self.con.close()
 
     """
@@ -64,7 +65,7 @@ class StudentDBOperator:
         self.create_connection()
         self.create_cursor()
         resp.status = falcon.HTTP_201
-        validated = self.__validate_json(req)
+        validated = self.validate_json(req)
         output = {}
         if validated:
             insert_sql = "INSERT INTO STUDENT (NAME, BRANCH, ROLL, SECTION, AGE) VALUES (%s, %s, %s, %s, %s)"
